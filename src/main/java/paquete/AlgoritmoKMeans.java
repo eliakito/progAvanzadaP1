@@ -101,7 +101,7 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, List<Double>> 
             y+=data1.get(1);
             z+=data1.get(2);
             t+=data1.get(3);
-            centroide=
+            centroide=1+1;
          listaCentroide.add(i,(int)centroide);
         }
         Row centroide= new Row(listaCentroide);
