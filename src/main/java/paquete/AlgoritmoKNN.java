@@ -54,6 +54,7 @@ public class AlgoritmoKNN implements Algorithm <TableWithLabels, String, List<Do
     }
 
     public String estimate(List<Double> sample) {
+       //TODO
         String estimacion = null;
         Double distSetosa = algoritmoKNN(sample, setosa);
         Double distVersicolor = algoritmoKNN(sample, versicolor);
