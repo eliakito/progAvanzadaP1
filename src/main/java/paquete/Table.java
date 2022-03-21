@@ -26,6 +26,7 @@ public class Table {
         return this.headers;
     }
 
+
     public Row getRowAt(int row) {
         Row fila = new Row();
         int contador = 0;
@@ -75,4 +76,10 @@ public class Table {
         }
         return lista;
     }
+
+    public int numeroFilas(){
+        return data.size();
+
+    }
 }
+
