@@ -26,7 +26,7 @@ public class Table {
         return this.headers;
     }
 
-
+        //ESTO ESTÁ MAL, LO VAMOS A SOLUCIONAR MAS ADELANTE, PORQUE NO ESD ESTA PRACTICA PERO FUNCIONA.
     public Row getRowAt(int row) {
         Row fila = new Row();
         int contador = 0;
@@ -78,7 +78,7 @@ public class Table {
     }
 
     public int numeroFilas(){
-        return data.size();
+        return getColumnAt(0).size();
 
     }
 }

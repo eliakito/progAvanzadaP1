@@ -1,5 +1,4 @@
 package paquete;
-
 import java.util.*;
 
 public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
@@ -10,7 +9,7 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
     List<Row> listaRepresentantesGrupo;
     List<Integer> listaIndices;
     int [] listaIndiceGrupo;
-    List<List<Double>> listaSumas;
+
     // CONSTRUCTORES
     public AlgoritmoKMeans(){
         numberClusters = 0;
@@ -18,7 +17,6 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
         seed = 0;
         listaRepresentantesGrupo = new ArrayList<Row>(numberClusters);
         listaIndices = new ArrayList<>();
-
     }
     public AlgoritmoKMeans(int numberClusters, int iterations, long seed) {
         this.numberClusters = numberClusters;
@@ -26,9 +24,6 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
         this.seed = seed;
         listaRepresentantesGrupo = new ArrayList<Row>(numberClusters);
         listaIndices = new ArrayList<>();
-        listaIndiceGrupo= new int[150];
-
-
     }
 
     // MÉTODOS
@@ -36,14 +31,11 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
     public void train(Table data)  {
         //TODO
         representantesIniciales(data);
-
         int [] asignaciones;
         for(int i = 0; i < iterations; i++) {
             asignaciones = asignarGrupos(data);
-
-           calculoCentroideGrupo(asignaciones, data);
+            calculoCentroideGrupo(asignaciones, data);
         }
-        IndicesToString();
     }
 
     @Override
@@ -52,9 +44,11 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
         Double distancia = distanciaEuclide(r.getData(), listaRepresentantesGrupo.get(0).getData());
         Double distanciaMin = distancia;
         Integer grupoMin = 0;
+        System.out.println("Estos son los representantes finales ");
         for(int i = 0; i < listaRepresentantesGrupo.size(); i++) {
             distancia = distanciaEuclide(r.getData(), listaRepresentantesGrupo.get(i).getData());
-            if(distancia >= distanciaMin) {
+            System.out.println("R"+i+": "+listaRepresentantesGrupo.get(i).getData());
+            if(distancia <= distanciaMin) {
                 distanciaMin = distancia;
                 grupoMin = i;
             }
@@ -65,34 +59,28 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
     private void representantesIniciales(Table data) {
         crearListIndices(data);
         representanteAleatorio(listaIndices, data);
-        if(hayRepetidos(listaRepresentantesGrupo)){
+        if(hayRepetidos(listaRepresentantesGrupo))
             representanteAleatorio(listaIndices, data);
-        System.out.println("No me jodas rey que ha salido uno repetido");
-        }
-        representantesGrupoToString();
-
+        representantesGrupoInicialesToString();
     }
 
     private void  representanteAleatorio(List<Integer> listaIndices, Table data){
-
-        Collections.shuffle(listaIndices);
-        //Collections.shuffle(listaIndices,new Random(seed));
-        //CLEAR SI HAY REPETIDOS TENER LISTA VACIA DE NUEVO.
+        Collections.shuffle(listaIndices,new Random(seed));
         listaRepresentantesGrupo.clear();
         for(int i = 0; i < numberClusters; i++) {
             listaRepresentantesGrupo.add(data.getRowAt(listaIndices.get(i)));
         }
     }
-    void representantesGrupoToString(){
+    void representantesGrupoInicialesToString(){
+        System.out.println("Estos son los representantes Iniciales: ");
         for(Row o:listaRepresentantesGrupo)
-            System.out.println("Estos son los representantes "+o.getData().toString());
+            System.out.println(o.getData().toString());
     }
 
-    //Para crear la tabla una sola vez
+    //Para crear la tabla de indices una sola vez
     private void crearListIndices(Table data){
-        for(int i = 0; i < data.getColumnAt(0).size(); i++)
+        for(int i = 0; i < data.numeroFilas(); i++)
                 listaIndices.add(i);
-
     }
     private boolean hayRepetidos(List<Row> listaRepresentantesGrupo){
         boolean res=false;
@@ -105,9 +93,9 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
     }
 
     private int [] asignarGrupos(Table data) {
-       // List<Integer> asignacionesGrupos= new ArrayList<>();
-
-        for(int i = 0; i < data.getColumnAt(0).size(); i++) {
+        listaIndiceGrupo= new int[data.numeroFilas()];
+        //Para tener distancia inicial para comparar.
+        for(int i = 0; i < data.numeroFilas(); i++) {
             Double distancia = distanciaEuclide(data.getRowAt(i).getData(), listaRepresentantesGrupo.get(0).getData());
             Double distanciaMin = distancia;
             Integer grupoMin = 0;
@@ -122,46 +110,37 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
         return listaIndiceGrupo;
     }
 
-    void IndicesToString(){
-        for(int o:listaIndiceGrupo)
-            System.out.println("Grupo: "+o);
-    }
-
     private void calculoCentroideGrupo(int[] asignacionesGrupos,Table data){
-        listaSumas=new ArrayList<List<Double>>(numberClusters);
-        int[]tamañosGrupos=new int[numberClusters];
-
-        for(int i = 0; i < listaIndiceGrupo.length; i++) {
-            Integer k = listaIndiceGrupo[i];
-            listaSumas.set(k, sumar(listaSumas.get(k),i,data));
+        int tamanyoListaRepresentantes = listaRepresentantesGrupo.size();
+        List<Integer> tamanyoCentroides = new ArrayList<Integer>();
+        for(int c = 0; c < tamanyoListaRepresentantes; c++)
+            tamanyoCentroides.add(0);
+        for(int i = 0; i < asignacionesGrupos.length; i++) {
+            Integer k = asignacionesGrupos[i];
+            listaRepresentantesGrupo.set(k, sumar(data.getRowAt(i).getData(), listaRepresentantesGrupo.get(k).getData()));
+            tamanyoCentroides.set(k, tamanyoCentroides.get(k)+1);
         }
-        for(int j = 0; j < listaRepresentantesGrupo.size(); j++) {
-            listaRepresentantesGrupo.set(j, null);
-        }
+        for(int j = 0; j < listaRepresentantesGrupo.size(); j++)
+            listaRepresentantesGrupo.set(j, dividir(listaRepresentantesGrupo.get(j).getData(), tamanyoCentroides.get(j)));
     }
 
-    private List<Double> sumar (List<Double> recopilacion,int indice, Table data) {
-        List<Double> loquellevamos= listaSumas.get(indice);
-        List<Double> loqueSumo= data.getRowAt(indice).getData();
-        for(int i = 0; i < loquellevamos.size(); i++) {
-            loquellevamos.set(i,loquellevamos.get(i) + loqueSumo.get(i));
-        }
-        return loquellevamos;
+    private Row sumar(List<Double> punto, List<Double> representante) {
+        List<Double> suma = new ArrayList<>();
+        for(int i = 0; i < representante.size(); i++)
+            suma.add(punto.get(i) + representante.get(i));
+        return new Row(suma);
     }
     private Row dividir(List<Double> representante, int tamanyo) {
         List<Double> division = new ArrayList<>();
-        for(int i = 0; i < representante.size(); i++) {
+        for(int i = 0; i < representante.size(); i++)
             division.add(representante.get(i)/tamanyo);
-        }
         return new Row(division);
     }
 
-
     private Double distanciaEuclide(List<Double> sample, List<Double> representante) {
         Double res = 0.0;
-        for(int i = 0; i < representante.size(); i++) {
+        for(int i = 0; i < representante.size(); i++)
             res += Math.pow((sample.get(i)-representante.get(i)),2);
-        }
         return Math.sqrt(res);
     }
 }
