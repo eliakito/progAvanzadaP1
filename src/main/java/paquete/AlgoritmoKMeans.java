@@ -15,14 +15,14 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
         numberClusters = 0;
         iterations = 0;
         seed = 0;
-        listaRepresentantesGrupo = new ArrayList<Row>(numberClusters);
+        listaRepresentantesGrupo = new ArrayList<>(numberClusters);
         listaIndices = new ArrayList<>();
     }
     public AlgoritmoKMeans(int numberClusters, int iterations, long seed) {
         this.numberClusters = numberClusters;
         this.iterations = iterations;
         this.seed = seed;
-        listaRepresentantesGrupo = new ArrayList<Row>(numberClusters);
+        listaRepresentantesGrupo = new ArrayList<>(numberClusters);
         listaIndices = new ArrayList<>();
     }
 
@@ -41,9 +41,9 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
     @Override
     public String estimate(Row r) {
         //TODO
-        Double distancia = distanciaEuclide(r.getData(), listaRepresentantesGrupo.get(0).getData());
-        Double distanciaMin = distancia;
-        Integer grupoMin = 0;
+        double distancia = distanciaEuclide(r.getData(), listaRepresentantesGrupo.get(0).getData());
+        double distanciaMin = distancia;
+        int grupoMin = 0;
         System.out.println("Estos son los representantes finales ");
         for(int i = 0; i < listaRepresentantesGrupo.size(); i++) {
             distancia = distanciaEuclide(r.getData(), listaRepresentantesGrupo.get(i).getData());
@@ -96,15 +96,13 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
         listaIndiceGrupo= new int[data.numeroFilas()];
         //Para tener distancia inicial para comparar.
         for(int i = 0; i < data.numeroFilas(); i++) {
-            Double distancia = distanciaEuclide(data.getRowAt(i).getData(), listaRepresentantesGrupo.get(0).getData());
-            Double distanciaMin = distancia;
-            Integer grupoMin = 0;
+            double distancia = distanciaEuclide(data.getRowAt(i).getData(), listaRepresentantesGrupo.get(0).getData());
+            double distanciaMin = distancia;
+            int grupoMin = 0;
             for (int j = 0; j < listaRepresentantesGrupo.size(); j++){
                 distancia = distanciaEuclide(data.getRowAt(i).getData(), listaRepresentantesGrupo.get(j).getData());
-                if(distancia <=distanciaMin) {
-                    grupoMin = j;
+                if(distancia <=distanciaMin)
                     listaIndiceGrupo[i]=j;
-                }
             }
         }
         return listaIndiceGrupo;
@@ -112,11 +110,11 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
 
     private void calculoCentroideGrupo(int[] asignacionesGrupos,Table data){
         int tamanyoListaRepresentantes = listaRepresentantesGrupo.size();
-        List<Integer> tamanyoCentroides = new ArrayList<Integer>();
+        List<Integer> tamanyoCentroides = new ArrayList<>();
         for(int c = 0; c < tamanyoListaRepresentantes; c++)
             tamanyoCentroides.add(0);
         for(int i = 0; i < asignacionesGrupos.length; i++) {
-            Integer k = asignacionesGrupos[i];
+            int k = asignacionesGrupos[i];
             listaRepresentantesGrupo.set(k, sumar(data.getRowAt(i).getData(), listaRepresentantesGrupo.get(k).getData()));
             tamanyoCentroides.set(k, tamanyoCentroides.get(k)+1);
         }
@@ -132,13 +130,14 @@ public class AlgoritmoKMeans implements Algorithm <Table, String, Row> {
     }
     private Row dividir(List<Double> representante, int tamanyo) {
         List<Double> division = new ArrayList<>();
-        for(int i = 0; i < representante.size(); i++)
-            division.add(representante.get(i)/tamanyo);
+        for (Double aDouble : representante) {
+            division.add(aDouble / tamanyo);
+        }
         return new Row(division);
     }
 
     private Double distanciaEuclide(List<Double> sample, List<Double> representante) {
-        Double res = 0.0;
+        double res = 0.0;
         for(int i = 0; i < representante.size(); i++)
             res += Math.pow((sample.get(i)-representante.get(i)),2);
         return Math.sqrt(res);
