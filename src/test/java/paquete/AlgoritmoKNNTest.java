@@ -2,6 +2,9 @@ package paquete;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import paquete.practica1.AlgoritmoKNN;
+import paquete.practica1.CSV;
+import paquete.practica1.TableWithLabels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +41,7 @@ class AlgoritmoKNNTest {
         sample.add(6.3); sample.add(2.9); sample.add(5.6); sample.add(1.8);
         assertEquals("Iris-virginica", knn.estimate(sample));
         sample = new ArrayList<Double>();
-        sample.add(5.9); sample.add(3.0); sample.add(5.1); sample.add(1.8);
+        sample.add(6.2); sample.add(2.7); sample.add(5.9); sample.add(2.0);
         assertEquals("Iris-virginica", knn.estimate(sample));
     }
 }

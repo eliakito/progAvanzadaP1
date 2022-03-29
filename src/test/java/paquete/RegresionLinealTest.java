@@ -2,6 +2,9 @@ package paquete;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import paquete.practica1.CSV;
+import paquete.practica1.RegresionLineal;
+import paquete.practica1.Table;
 
 import static org.junit.jupiter.api.Assertions.*;
 
