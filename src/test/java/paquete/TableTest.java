@@ -1,7 +1,6 @@
 package paquete;
 
 import org.junit.jupiter.api.DisplayName;
-import paquete.practica1.Table;
 
 import java.util.ArrayList;
 import java.util.List;
